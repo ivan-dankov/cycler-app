@@ -1083,7 +1083,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
             <Button
               onClick={handleSaveTransactions}
               disabled={loading || selectedTransactions.size === 0}
-              className="flex-1 sm:flex-[2] h-11 sm:h-10 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:shadow-none touch-manipulation text-sm sm:text-base"
+              className="flex-1 sm:flex-[2] h-11 sm:h-10 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:shadow-none touch-manipulation text-sm sm:text-base text-white"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

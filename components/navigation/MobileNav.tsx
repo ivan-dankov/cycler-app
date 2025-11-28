@@ -31,13 +31,13 @@ export default function MobileNav() {
               >
                 <div className={`p-4 rounded-full shadow-lg transition-transform hover:scale-105 ${
                   isActive 
-                    ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' 
+                    ? 'bg-blue-600 text-white dark:bg-blue-600' 
                     : 'bg-blue-600 text-white dark:bg-blue-500'
                 }`}>
                   <item.Icon className="w-6 h-6" />
                 </div>
                 <span className={`text-xs font-medium mt-1 ${
-                  isActive ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'
+                  isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
                 }`}>
                   {item.label}
                 </span>
@@ -51,7 +51,7 @@ export default function MobileNav() {
               href={item.href}
               className={`flex flex-col items-center justify-center h-full transition-colors ${
                 isActive
-                  ? 'text-gray-900 dark:text-white'
+                  ? 'text-blue-600 dark:text-blue-400'
                   : 'text-gray-500 dark:text-gray-400'
               }`}
             >
