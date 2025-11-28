@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Button, Input, Label, Select, Textarea, Alert, AlertDescription, Card, CardContent, CardHeader, CardTitle, Modal } from '@/components/ui'
 import { AlertTriangle } from '@untitledui/icons'
+import { extractTextFromImageClient } from '@/lib/ocr/tesseract-client'
 
 interface ImportTransactionsProps {
   categories: Array<{ id: string; name: string }>
@@ -158,34 +159,49 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
   }
 
   const processFile = async (file: File): Promise<TransactionWithMetadata[]> => {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => {
-      controller.abort()
-    }, 95000)
-
     try {
-      const response = await fetch('/api/ocr-and-parse', {
-        method: 'POST',
-        body: formData,
-        signal: controller.signal,
-      })
-      clearTimeout(timeoutId)
+      // Step 1: Extract text using client-side OCR (no server timeout!)
+      const extractedText = await extractTextFromImageClient(file)
+      
+      if (!extractedText || extractedText.trim().length === 0) {
+        return []
+      }
+
+      // Step 2: Parse transactions using OpenAI (server-side, but much faster)
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => {
+        controller.abort()
+      }, 60000) // 60 second timeout for parsing
+
+      let response: Response
+      try {
+        response = await fetch('/api/parse-transactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: extractedText }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId)
+        if (fetchError.name === 'AbortError') {
+          throw new Error('Parsing timed out after 60 seconds. Try with a shorter text or split into multiple parts.')
+        }
+        throw new Error(`Network error: ${fetchError.message || 'Unable to connect to server'}`)
+      }
 
       if (!response.ok) {
-        let errorMessage = 'Failed to process image'
+        let errorMessage = 'Failed to parse transactions'
         try {
           const contentType = response.headers.get('content-type')
           if (contentType && contentType.includes('application/json')) {
             const data = await response.json()
             errorMessage = data.error || errorMessage
           } else {
-            // Handle non-JSON responses (like 504 Gateway Timeout HTML pages)
+            // Handle non-JSON responses
             const text = await response.text()
             if (response.status === 504 || response.status === 408) {
-              errorMessage = 'Request timed out. The image may be too large or processing took too long. Try a smaller image or paste the text directly.'
+              errorMessage = 'Request timed out. Try with shorter text or split into multiple parts.'
             } else {
               errorMessage = `Server error: ${response.status} ${response.statusText}`
             }
@@ -193,9 +209,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
         } catch (parseError) {
           // If we can't parse the error, use status-based messages
           if (response.status === 504 || response.status === 408) {
-            errorMessage = 'Request timed out. The image may be too large or processing took too long. Try a smaller image or paste the text directly.'
-          } else if (response.status === 413) {
-            errorMessage = 'File too large. Maximum size is 10MB.'
+            errorMessage = 'Request timed out. Try with shorter text or split into multiple parts.'
           } else if (response.status === 401) {
             errorMessage = 'Authentication required. Please log in again.'
           } else {
@@ -221,15 +235,14 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
         ...t,
         sourceFile: file.name,
       }))
-    } catch (fetchError: any) {
-      clearTimeout(timeoutId)
-      if (fetchError.name === 'AbortError') {
-        throw new Error(`File "${file.name}" timed out after 95 seconds. Try a smaller image or paste the text directly.`)
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        throw new Error(`File "${file.name}" timed out. Try a smaller image or paste the text directly.`)
       }
-      if (fetchError instanceof TypeError && fetchError.message.includes('fetch')) {
+      if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new Error('Network error: Unable to connect to server. Please check your connection and try again.')
       }
-      throw fetchError
+      throw error
     }
   }
 
@@ -260,7 +273,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
         
         const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2)
         setStatusMessage(`Processing file ${i + 1} of ${files.length}...`)
-        setStatusDetail(`File: ${file.name} (${fileSizeMB} MB)`)
+        setStatusDetail(`File: ${file.name} (${fileSizeMB} MB) - Extracting text from image...`)
 
         try {
           const fileTransactions = await processFile(file)
