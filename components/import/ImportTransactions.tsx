@@ -175,8 +175,14 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to process image')
+        let errorMessage = 'Failed to process image'
+        try {
+          const data = await response.json()
+          errorMessage = data.error || errorMessage
+        } catch {
+          errorMessage = `Server error: ${response.status} ${response.statusText}`
+        }
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()
@@ -193,7 +199,10 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
     } catch (fetchError: any) {
       clearTimeout(timeoutId)
       if (fetchError.name === 'AbortError') {
-        throw new Error(`File "${file.name}" timed out after 95 seconds.`)
+        throw new Error(`File "${file.name}" timed out after 95 seconds. Try a smaller image or paste the text directly.`)
+      }
+      if (fetchError instanceof TypeError && fetchError.message.includes('fetch')) {
+        throw new Error('Network error: Unable to connect to server. Please check your connection and try again.')
       }
       throw fetchError
     }
@@ -351,15 +360,37 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
       setStatusMessage('Using AI to extract transactions...')
       setStatusDetail('Analyzing text structure and identifying financial transactions...')
       
-      const response = await fetch('/api/parse-transactions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      })
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => {
+        controller.abort()
+      }, 95000) // 95 second timeout
+
+      let response: Response
+      try {
+        response = await fetch('/api/parse-transactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId)
+        if (fetchError.name === 'AbortError') {
+          throw new Error('Request timed out after 95 seconds. Please try with shorter text or split into multiple parts.')
+        }
+        throw new Error(`Network error: ${fetchError.message || 'Failed to connect to server'}`)
+      }
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to parse transactions')
+        let errorMessage = 'Failed to parse transactions'
+        try {
+          const data = await response.json()
+          errorMessage = data.error || errorMessage
+        } catch {
+          errorMessage = `Server error: ${response.status} ${response.statusText}`
+        }
+        throw new Error(errorMessage)
       }
 
       setStatusMessage('Finalizing results...')

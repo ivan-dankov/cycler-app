@@ -3,6 +3,14 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["iad1"]
+  "regions": ["iad1"],
+  "functions": {
+    "app/api/ocr-and-parse/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/parse-transactions/route.ts": {
+      "maxDuration": 60
+    }
+  }
 }
 
