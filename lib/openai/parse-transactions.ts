@@ -1,14 +1,22 @@
 import OpenAI from 'openai'
 import { ParsedTransaction } from '@/types/transactions'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization to avoid build-time errors
+function getOpenAIClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OpenAI API key not configured')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export async function parseTransactionsFromText(text: string, existingCategories: string[] = []): Promise<ParsedTransaction[]> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error('OpenAI API key not configured')
   }
+
+  const openai = getOpenAIClient()
 
   const categoryContext = existingCategories.length > 0 
     ? `\n- Suggest category names ONLY from this list: ${existingCategories.join(', ')}. If no category from this list fits, suggest a new one or return null.`
