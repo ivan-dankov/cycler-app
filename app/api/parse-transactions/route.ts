@@ -96,6 +96,15 @@ export async function POST(request: NextRequest) {
   }
 
   // Race between processing and timeout
-  return Promise.race([processRequest(), timeoutPromise])
+  try {
+    return await Promise.race([processRequest(), timeoutPromise])
+  } catch (error) {
+    // Ensure we always return JSON, even on unexpected errors
+    console.error('[Parse API] Unexpected error:', error)
+    return NextResponse.json(
+      { error: 'An unexpected error occurred. Please try again.' },
+      { status: 500 }
+    )
+  }
 }
 

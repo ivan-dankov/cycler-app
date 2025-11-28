@@ -177,15 +177,40 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
       if (!response.ok) {
         let errorMessage = 'Failed to process image'
         try {
-          const data = await response.json()
-          errorMessage = data.error || errorMessage
-        } catch {
-          errorMessage = `Server error: ${response.status} ${response.statusText}`
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            errorMessage = data.error || errorMessage
+          } else {
+            // Handle non-JSON responses (like 504 Gateway Timeout HTML pages)
+            const text = await response.text()
+            if (response.status === 504 || response.status === 408) {
+              errorMessage = 'Request timed out. The image may be too large or processing took too long. Try a smaller image or paste the text directly.'
+            } else {
+              errorMessage = `Server error: ${response.status} ${response.statusText}`
+            }
+          }
+        } catch (parseError) {
+          // If we can't parse the error, use status-based messages
+          if (response.status === 504 || response.status === 408) {
+            errorMessage = 'Request timed out. The image may be too large or processing took too long. Try a smaller image or paste the text directly.'
+          } else if (response.status === 413) {
+            errorMessage = 'File too large. Maximum size is 10MB.'
+          } else if (response.status === 401) {
+            errorMessage = 'Authentication required. Please log in again.'
+          } else {
+            errorMessage = `Server error: ${response.status} ${response.statusText}`
+          }
         }
         throw new Error(errorMessage)
       }
 
-      const data = await response.json()
+      let data
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        throw new Error('Invalid response from server. Please try again.')
+      }
       
       if (!data.transactions || data.transactions.length === 0) {
         return []
@@ -385,10 +410,28 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
       if (!response.ok) {
         let errorMessage = 'Failed to parse transactions'
         try {
-          const data = await response.json()
-          errorMessage = data.error || errorMessage
-        } catch {
-          errorMessage = `Server error: ${response.status} ${response.statusText}`
+          const contentType = response.headers.get('content-type')
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json()
+            errorMessage = data.error || errorMessage
+          } else {
+            // Handle non-JSON responses (like 504 Gateway Timeout HTML pages)
+            const text = await response.text()
+            if (response.status === 504 || response.status === 408) {
+              errorMessage = 'Request timed out. The text may be too long. Try splitting it into smaller parts.'
+            } else {
+              errorMessage = `Server error: ${response.status} ${response.statusText}`
+            }
+          }
+        } catch (parseError) {
+          // If we can't parse the error, use status-based messages
+          if (response.status === 504 || response.status === 408) {
+            errorMessage = 'Request timed out. The text may be too long. Try splitting it into smaller parts.'
+          } else if (response.status === 401) {
+            errorMessage = 'Authentication required. Please log in again.'
+          } else {
+            errorMessage = `Server error: ${response.status} ${response.statusText}`
+          }
         }
         throw new Error(errorMessage)
       }
@@ -396,7 +439,12 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
       setStatusMessage('Finalizing results...')
       setStatusDetail('Processing extracted transaction data...')
 
-      const data = await response.json()
+      let data
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        throw new Error('Invalid response from server. Please try again.')
+      }
       const transactions = data.transactions || []
       
       console.log('Parsing complete:', {
