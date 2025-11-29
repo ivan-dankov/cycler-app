@@ -837,9 +837,9 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
           setLoading(false)
         }}
         title="Review Transactions"
-        className="max-w-2xl w-full mx-0 max-h-[calc(100vh-1rem)] sm:max-h-[90vh]"
+        className="max-w-2xl w-full mx-0 max-h-[calc(100dvh-3rem)] sm:max-h-[90vh]"
       >
-        <div className="flex flex-col h-full bg-white">
+        <div className="flex flex-col min-h-0 bg-white">
           {/* Stats Header */}
           <div className="flex-shrink-0 grid grid-cols-3 gap-3 pb-4 mb-4 border-b border-gray-100">
             {(() => {
@@ -874,7 +874,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
           )}
 
           {/* Transactions List */}
-          <div className="flex-1 overflow-y-auto -mx-4 sm:-mx-6 px-4 sm:px-6 space-y-3 pb-4 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto min-h-0 -mx-4 sm:-mx-6 px-4 sm:px-6 space-y-3 pb-4 custom-scrollbar">
             {parsedTransactions.map((transaction, index) => {
               const isDuplicate = transaction.isDuplicate
               const isExistingDuplicate = transaction.isExistingDuplicate

@@ -42,7 +42,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
       
       {/* Modal */}
       <Card className={cn(
-        'relative z-10 w-full max-w-md max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100vh-2rem)] md:max-h-[85vh] overflow-hidden flex flex-col',
+        'relative z-10 w-full max-w-md max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100vh-2rem)] md:max-h-[85vh] overflow-hidden flex flex-col',
         'mx-auto my-auto shadow-2xl',
         className
       )}>
@@ -60,7 +60,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto px-4 sm:px-6 min-h-0 flex flex-col pb-safe">
+        <CardContent className="flex-1 min-h-0 flex flex-col px-4 sm:px-6 pb-safe">
           {children}
         </CardContent>
       </Card>
