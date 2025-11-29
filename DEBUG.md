@@ -118,3 +118,4 @@ Use the "Paste Financial Statement Text" option to bypass OCR and test if the pa
 4. **Check file size:** Keep images under 2MB
 5. **Check image format:** Use PNG or JPEG
 
+

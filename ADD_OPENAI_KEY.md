@@ -60,3 +60,4 @@ OPENAI_API_KEY=your_openai_api_key  ← This is a placeholder!
 
 Replace it with your actual key from https://platform.openai.com/api-keys
 
+

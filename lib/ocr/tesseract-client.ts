@@ -71,3 +71,4 @@ export async function extractTextFromImageClient(file: File): Promise<string> {
   }
 }
 
+

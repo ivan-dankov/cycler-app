@@ -13,3 +13,4 @@ UPDATE default_categories SET color = '#64748B', icon = '📦' WHERE name = 'Oth
 -- Update initial INSERT statement in schema (if not already handled by logic)
 -- Note: This is idempotent for existing rows due to previous setup but good for completeness in migration history
 
+

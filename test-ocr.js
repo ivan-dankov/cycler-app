@@ -42,3 +42,4 @@ fetch('http://localhost:3000/api/parse-transactions', {
     console.log('⚠️  Authentication required for full test');
   });
 
+

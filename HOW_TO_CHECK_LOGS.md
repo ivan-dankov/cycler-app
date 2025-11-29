@@ -108,3 +108,4 @@ When you upload an image, you should see logs like:
 
 The terminal logs will tell you exactly what's happening and where it might be getting stuck!
 
+

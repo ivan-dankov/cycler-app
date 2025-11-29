@@ -5,7 +5,7 @@ import { ParsedTransaction } from '@/types/transactions'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Button, Input, Label, Select, Textarea, Alert, AlertDescription, Card, CardContent, CardHeader, CardTitle, Modal } from '@/components/ui'
+import { Button, Input, Label, Select, Textarea, Alert, AlertDescription, Card, CardContent, CardHeader, CardTitle, Modal, Checkbox } from '@/components/ui'
 import { AlertTriangle } from '@untitledui/icons'
 import { extractTextFromImageClient } from '@/lib/ocr/tesseract-client'
 
@@ -773,58 +773,40 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
         </div>
 
         {loading && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6">
-            <Card className="w-full max-w-md bg-white dark:bg-gray-900 border-none shadow-2xl max-h-[90vh] overflow-y-auto">
-              <CardContent className="pt-8 pb-8 text-center space-y-6">
-                {/* No circular spinner, just a clean loading animation */}
-                <div className="flex justify-center gap-2">
-                  <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                  <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce"></div>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4">
+            <Card className="w-full max-w-sm bg-white border-none shadow-xl mx-2">
+              <CardContent className="pt-5 pb-5 sm:pt-6 sm:pb-6 px-4 sm:px-6 text-center space-y-3 sm:space-y-4">
+                {/* Minimal loading animation */}
+                <div className="flex justify-center gap-1.5">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
                 </div>
                 
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {statusMessage || 'Processing...'}
-                    </h3>
-                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Please wait while we analyze your documents
+                {/* Single status message - no duplication */}
+                <div className="space-y-2">
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {statusMessage || 'Processing...'}
+                  </h3>
+                  {statusDetail && (
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {statusDetail}
                     </p>
-                  </div>
-
-                  {/* Detailed Status Steps */}
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-left space-y-3 max-h-48 overflow-y-auto custom-scrollbar border border-gray-100 dark:border-gray-700">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 w-2 h-2 rounded-full bg-blue-500 shrink-0"></div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-tight">
-                        {statusDetail || 'Initializing...'}
-                      </p>
-                    </div>
-                    
-                    {processingProgress && (
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 w-2 h-2 rounded-full bg-blue-500/50 shrink-0"></div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight">
-                          Processing file {processingProgress.current} of {processingProgress.total}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
-                {processingProgress && (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs font-medium text-gray-500 dark:text-gray-400 px-1">
-                      <span>Progress</span>
-                      <span>{Math.round((processingProgress.current / processingProgress.total) * 100)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
+                {/* Simple progress bar - only show if processing multiple files */}
+                {processingProgress && processingProgress.total > 1 && (
+                  <div className="space-y-1.5 pt-2">
+                    <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                       <div 
-                        className="bg-blue-600 h-full transition-all duration-500 ease-out rounded-full"
+                        className="bg-blue-600 h-full transition-all duration-300 ease-out rounded-full"
                         style={{ width: `${(processingProgress.current / processingProgress.total) * 100}%` }}
                       />
                     </div>
+                    <p className="text-xs text-gray-500">
+                      {processingProgress.current} of {processingProgress.total} files
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -834,7 +816,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
         </CardContent>
       </Card>
 
-      {/* Review Modal */}
+      {/* Review Modal - Redesigned from Scratch */}
       <Modal
         isOpen={step === 'review'}
         onClose={() => {
@@ -855,347 +837,252 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
           setLoading(false)
         }}
         title="Review Transactions"
-        className="max-w-4xl max-h-[calc(100vh-2rem)] sm:max-h-[90vh]"
+        className="max-w-2xl w-full mx-0 max-h-[calc(100vh-1rem)] sm:max-h-[90vh]"
       >
-        <div className="space-y-6">
-          {error && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-gray-100 dark:border-gray-800">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Select and review transactions to import
-            </p>
-            
+        <div className="flex flex-col h-full bg-white">
+          {/* Stats Header */}
+          <div className="flex-shrink-0 grid grid-cols-3 gap-3 pb-4 mb-4 border-b border-gray-100">
             {(() => {
               const internalDupes = parsedTransactions.filter(t => t.isDuplicate).length
               const existingDupes = parsedTransactions.filter(t => t.isExistingDuplicate).length
               const unique = parsedTransactions.filter(t => !t.isDuplicate && !t.isExistingDuplicate).length
-              
+              const totalDupes = internalDupes + existingDupes
+
               return (
-                <div className="flex flex-wrap gap-2 sm:gap-3 text-sm">
-                  <div className="px-2.5 sm:px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg font-medium border border-blue-100 dark:border-blue-800 whitespace-nowrap">
-                    {unique} New
+                <>
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 border border-gray-100">
+                    <span className="text-2xl font-bold text-gray-900 leading-none">{selectedTransactions.size}</span>
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider mt-1.5">Selected</span>
                   </div>
-                  {(internalDupes > 0 || existingDupes > 0) && (
-                    <div className="px-2.5 sm:px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded-lg font-medium border border-amber-100 dark:border-amber-800 whitespace-nowrap">
-                      {internalDupes + existingDupes} Duplicates
-                    </div>
-                  )}
-                  <div className="px-2.5 sm:px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-medium border border-gray-200 dark:border-gray-700 whitespace-nowrap">
-                    {selectedTransactions.size} Selected
+                  <div className="flex flex-col items-center justify-center p-3 rounded-xl bg-blue-50 border border-blue-100">
+                    <span className="text-2xl font-bold text-blue-600 leading-none">{unique}</span>
+                    <span className="text-xs font-medium text-blue-600/80 uppercase tracking-wider mt-1.5">New</span>
                   </div>
-                </div>
+                  <div className={`flex flex-col items-center justify-center p-3 rounded-xl border ${totalDupes > 0 ? 'bg-amber-50 border-amber-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                    <span className={`text-2xl font-bold leading-none ${totalDupes > 0 ? 'text-amber-600' : 'text-gray-400'}`}>{totalDupes}</span>
+                    <span className={`text-xs font-medium uppercase tracking-wider mt-1.5 ${totalDupes > 0 ? 'text-amber-600/80' : 'text-gray-400'}`}>Duplicates</span>
+                  </div>
+                </>
               )
             })()}
           </div>
 
-          <div className="space-y-6 pr-2 custom-scrollbar">
-            {(() => {
-              // Group transactions by amount (rounded to 2 decimals)
-              const groupedByAmount = new Map<string, Array<{ transaction: TransactionWithMetadata; index: number }>>()
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Transactions List */}
+          <div className="flex-1 overflow-y-auto -mx-4 sm:-mx-6 px-4 sm:px-6 space-y-3 pb-4 custom-scrollbar">
+            {parsedTransactions.map((transaction, index) => {
+              const isDuplicate = transaction.isDuplicate
+              const isExistingDuplicate = transaction.isExistingDuplicate
+              const existingTransaction = isExistingDuplicate && transaction.existingTransactionId
+                ? existingTransactions.find(t => t.id === transaction.existingTransactionId)
+                : null
               
-              parsedTransactions.forEach((transaction, index) => {
-                const amountKey = (amountMap[index] ?? transaction.amount).toFixed(2)
-                if (!groupedByAmount.has(amountKey)) {
-                  groupedByAmount.set(amountKey, [])
-                }
-                groupedByAmount.get(amountKey)!.push({ transaction, index })
-              })
-              
-              // Sort groups by amount (descending) and within each group, show non-duplicates first
-              const sortedGroups = Array.from(groupedByAmount.entries())
-                .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
-                .map(([amount, items]) => ({
-                  amount: parseFloat(amount),
-                  items: items.sort((a, b) => {
-                    // Priority: new transactions > internal duplicates > existing duplicates
-                    if (a.transaction.isExistingDuplicate !== b.transaction.isExistingDuplicate) {
-                      return a.transaction.isExistingDuplicate ? 1 : -1
-                    }
-                    if (a.transaction.isDuplicate !== b.transaction.isDuplicate) {
-                      return a.transaction.isDuplicate ? 1 : -1
-                    }
-                    return a.transaction.description.localeCompare(b.transaction.description)
-                  })
-                }))
-              
-              return sortedGroups.map((group, groupIndex) => (
-                <div key={groupIndex} className="space-y-3">
-                  {group.items.length > 1 && (
-                    <div className="flex items-center gap-3 py-2">
-                      <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-gray-800/50 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-700">
-                        Amount Group: {formatCurrency(group.amount)} ({group.items.length})
-                      </span>
-                      <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
-                    </div>
-                  )}
-                  {group.items.map(({ transaction, index }) => {
-                    const isDuplicate = transaction.isDuplicate
-                    const isExistingDuplicate = transaction.isExistingDuplicate
-                    const existingTransaction = isExistingDuplicate && transaction.existingTransactionId
-                      ? existingTransactions.find(t => t.id === transaction.existingTransactionId)
-                      : null
-                    
-                    const isSelected = selectedTransactions.has(index)
-                    
-                    return (
-                      <div
-                        key={index}
-                        className={`group relative rounded-xl border transition-all duration-200 ${
-                          isExistingDuplicate
-                            ? 'bg-amber-50/50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800/50'
-                            : isDuplicate
-                            ? 'bg-yellow-50/50 border-yellow-200 dark:bg-yellow-900/10 dark:border-yellow-800/50'
-                            : isSelected
-                            ? 'bg-white border-blue-200 shadow-sm ring-1 ring-blue-100 dark:bg-gray-800 dark:border-blue-800 dark:ring-blue-900/30'
-                            : 'bg-white border-gray-100 hover:border-gray-300 dark:bg-gray-800 dark:border-gray-700'
-                        }`}
-                      >
-                        {/* Duplicate Indicators */}
-                        {(isExistingDuplicate || isDuplicate) && (
-                          <div className={`absolute -top-2.5 right-4 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border shadow-sm ${
-                            isExistingDuplicate 
-                              ? 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900 dark:text-amber-300 dark:border-amber-700'
-                              : 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700'
-                          }`}>
-                            {isExistingDuplicate ? 'Existing Match' : 'Duplicate'}
-                          </div>
-                        )}
+              const isSelected = selectedTransactions.has(index)
+              const transactionType = typeMap[index] ?? transaction.type
+              const transactionAmount = amountMap[index] ?? transaction.amount
 
-                        <div className="p-3 sm:p-4 flex gap-3 sm:gap-4">
-                          {/* Checkbox */}
-                          <div className="pt-1 flex-shrink-0">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => toggleTransaction(index)}
-                              disabled={isDuplicate || isExistingDuplicate}
-                              className="w-5 h-5 sm:w-5 sm:h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-900 cursor-pointer disabled:opacity-50 touch-manipulation"
-                            />
-                          </div>
-
-                          <div className="flex-1 space-y-4">
-                            {/* Header: Description & Source */}
-                            <div className="flex justify-between items-start gap-4">
-                              <div className="space-y-1">
-                                <h4 className="font-semibold text-gray-900 dark:text-white leading-tight">
-                                  {transaction.description}
-                                </h4>
-                                {transaction.sourceFile && (
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600"></span>
-                                    {transaction.sourceFile}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Main Input Grid */}
-                            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 ${!isSelected ? 'opacity-50 pointer-events-none' : ''}`}>
-                              {/* Date */}
-                              <div className="sm:col-span-1 lg:col-span-3 space-y-1.5">
-                                <Label className="text-xs text-gray-500 font-medium">Date</Label>
-                                <Input
-                                  type="date"
-                                  value={transaction.date}
-                                  onChange={(e) => {
-                                    const newParsed = [...parsedTransactions]
-                                    newParsed[index] = { ...transaction, date: e.target.value }
-                                    setParsedTransactions(newParsed)
-                                  }}
-                                  className="h-10 sm:h-9 text-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 touch-manipulation"
-                                />
-                              </div>
-
-                              {/* Amount */}
-                              <div className="sm:col-span-1 lg:col-span-3 space-y-1.5">
-                                <Label className="text-xs text-gray-500 font-medium">Amount</Label>
-                                <div className="relative">
-                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                                  <Input
-                                    type="number"
-                                    step="0.01"
-                                    value={amountMap[index] ?? transaction.amount}
-                                    onChange={(e) => {
-                                      const newAmount = parseFloat(e.target.value) || 0
-                                      setAmountMap({ ...amountMap, [index]: newAmount })
-                                    }}
-                                    className="h-10 sm:h-9 pl-7 text-sm font-mono bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 touch-manipulation"
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Type */}
-                              <div className="sm:col-span-1 lg:col-span-3 space-y-1.5">
-                                <Label className="text-xs text-gray-500 font-medium">Type</Label>
-                                <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 h-10 sm:h-9">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const newType = 'income'
-                                      setTypeMap({ ...typeMap, [index]: newType })
-                                      const newCategoryMap = { ...categoryMap }
-                                      delete newCategoryMap[index]
-                                      setCategoryMap(newCategoryMap)
-                                    }}
-                                    className={`flex-1 rounded-md text-xs font-medium transition-all touch-manipulation ${
-                                      (typeMap[index] ?? transaction.type) === 'income'
-                                        ? 'bg-white dark:bg-gray-700 text-green-600 shadow-sm ring-1 ring-black/5 dark:ring-white/10'
-                                        : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-                                    }`}
-                                  >
-                                    Income
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setTypeMap({ ...typeMap, [index]: 'expense' })}
-                                    className={`flex-1 rounded-md text-xs font-medium transition-all touch-manipulation ${
-                                      (typeMap[index] ?? transaction.type) === 'expense'
-                                        ? 'bg-white dark:bg-gray-700 text-red-600 shadow-sm ring-1 ring-black/5 dark:ring-white/10'
-                                        : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-                                    }`}
-                                  >
-                                    Expense
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Category */}
-                              <div className="sm:col-span-1 lg:col-span-3 space-y-1.5">
-                                <Label className="text-xs text-gray-500 font-medium">
-                                  Category <span className="text-gray-400 font-normal">(Optional)</span>
-                                </Label>
-                                {(typeMap[index] ?? transaction.type) === 'expense' ? (
-                                  <div className="space-y-1">
-                                    {categories.length > 0 ? (
-                                      <Select
-                                        value={categoryMap[index] || ''}
-                                        onChange={(e) => {
-                                          const newCategoryMap = { ...categoryMap }
-                                          if (e.target.value) {
-                                            newCategoryMap[index] = e.target.value
-                                          } else {
-                                            delete newCategoryMap[index]
-                                          }
-                                          setCategoryMap(newCategoryMap)
-                                        }}
-                                        className="h-10 sm:h-9 text-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 touch-manipulation"
-                                      >
-                                        <option value="">Uncategorized</option>
-                                        {categories.map((cat) => (
-                                          <option key={cat.id} value={cat.id}>
-                                            {cat.name}
-                                          </option>
-                                        ))}
-                                      </Select>
-                                    ) : (
-                                      <Select value="" disabled className="h-10 sm:h-9 text-sm bg-gray-50">
-                                        <option value="">No categories</option>
-                                      </Select>
-                                    )}
-                                    {transaction.suggested_category && !categoryMap[index] && (
-                                      <p className="text-[10px] text-blue-600 dark:text-blue-400 flex items-center gap-1">
-                                        <span className="opacity-70">Suggested:</span> {transaction.suggested_category}
-                                      </p>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <div className="h-10 sm:h-9 flex items-center px-3 text-xs text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-md border border-gray-100 dark:border-gray-800 italic">
-                                    Not applicable
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Duplicate Resolution Actions */}
-                            {isExistingDuplicate && existingTransaction && (
-                              <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-100 dark:border-amber-800/50">
-                                <div className="flex items-center justify-between gap-4">
-                                  <div className="text-xs text-amber-800 dark:text-amber-200">
-                                    <span className="font-medium">Found existing transaction:</span>{' '}
-                                    {formatDate(existingTransaction.date)} • {existingTransaction.description}
-                                  </div>
-                                  <label className="flex items-center gap-2 cursor-pointer select-none">
-                                    <div className="relative flex items-center">
-                                      <input
-                                        type="checkbox"
-                                        checked={mergeMap[index] || false}
-                                        onChange={(e) => {
-                                          setMergeMap({ ...mergeMap, [index]: e.target.checked })
-                                        }}
-                                        className="peer sr-only"
-                                      />
-                                      <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-300 dark:peer-focus:ring-amber-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-amber-500"></div>
-                                    </div>
-                                    <span className="text-xs font-medium text-amber-700 dark:text-amber-300">
-                                      Update Existing
-                                    </span>
-                                  </label>
-                                </div>
-                              </div>
-                            )}
-                          </div>
+              return (
+                <div 
+                  key={index}
+                  className={`
+                    relative rounded-xl border-2 transition-all duration-200
+                    ${isSelected ? 'border-blue-600 bg-white shadow-md z-10' : 'border-gray-200 bg-white hover:border-gray-300'}
+                    ${isDuplicate || isExistingDuplicate ? 'bg-amber-50/30' : ''}
+                  `}
+                >
+                  <div className="p-4">
+                    {/* Header: Checkbox + Description */}
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="pt-0.5">
+                        <div className="relative flex items-center">
+                          <Checkbox
+                            checked={isSelected}
+                            onChange={() => toggleTransaction(index)}
+                            disabled={isDuplicate || isExistingDuplicate}
+                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-600 focus:ring-offset-0 cursor-pointer disabled:opacity-50"
+                          />
                         </div>
                       </div>
-                    )
-                  })}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className={`font-semibold text-base leading-snug ${isSelected ? 'text-gray-900' : 'text-gray-600'}`}>
+                            {transaction.description}
+                          </h4>
+                          {(isDuplicate || isExistingDuplicate) && (
+                            <span className={`flex-shrink-0 px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${isExistingDuplicate ? 'bg-amber-100 text-amber-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                              {isExistingDuplicate ? 'Existing' : 'Duplicate'}
+                            </span>
+                          )}
+                        </div>
+                        {transaction.sourceFile && (
+                          <p className="text-xs text-gray-400 mt-1 truncate">{transaction.sourceFile}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Inputs Row */}
+                    <div className="grid grid-cols-2 gap-3 mb-2">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-gray-500 ml-1">Amount</label>
+                        <div className="relative">
+                          <span className={`absolute left-3 top-1/2 -translate-y-1/2 font-medium ${isSelected ? 'text-gray-900' : 'text-gray-400'}`}>$</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={transactionAmount}
+                            onChange={(e) => {
+                              const newAmount = parseFloat(e.target.value) || 0
+                              setAmountMap({ ...amountMap, [index]: newAmount })
+                            }}
+                            disabled={!isSelected}
+                            className={`w-full h-11 pl-7 pr-3 rounded-lg border text-base font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600/20 disabled:bg-gray-50 disabled:text-gray-400 ${isSelected ? 'border-gray-300 bg-white text-gray-900 focus:border-blue-600' : 'border-gray-200 bg-gray-50 text-gray-500'}`}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-gray-500 ml-1">Date</label>
+                        <input
+                          type="date"
+                          value={transaction.date}
+                          onChange={(e) => {
+                            const newParsed = [...parsedTransactions]
+                            newParsed[index] = { ...transaction, date: e.target.value }
+                            setParsedTransactions(newParsed)
+                          }}
+                          disabled={!isSelected}
+                          className={`w-full h-11 px-3 rounded-lg border text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600/20 disabled:bg-gray-50 disabled:text-gray-400 ${isSelected ? 'border-gray-300 bg-white text-gray-900 focus:border-blue-600' : 'border-gray-200 bg-gray-50 text-gray-500'}`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Expanded Details */}
+                    {isSelected && (
+                      <div className="pt-3 mt-3 border-t border-gray-100 animate-in slide-in-from-top-2 duration-200">
+                        <div className="space-y-3">
+                          {/* Type Selector */}
+                          <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg">
+                            <button
+                              onClick={() => {
+                                const newType = 'income'
+                                setTypeMap({ ...typeMap, [index]: newType })
+                                const newCategoryMap = { ...categoryMap }
+                                delete newCategoryMap[index]
+                                setCategoryMap(newCategoryMap)
+                              }}
+                              className={`h-9 text-sm font-medium rounded-md transition-all ${transactionType === 'income' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            >
+                              Income
+                            </button>
+                            <button
+                              onClick={() => setTypeMap({ ...typeMap, [index]: 'expense' })}
+                              className={`h-9 text-sm font-medium rounded-md transition-all ${transactionType === 'expense' ? 'bg-white text-red-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            >
+                              Expense
+                            </button>
+                          </div>
+
+                          {/* Category Selector */}
+                          {transactionType === 'expense' && (
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-medium text-gray-500 ml-1">Category</label>
+                              <div className="relative">
+                                <select
+                                  value={categoryMap[index] || ''}
+                                  onChange={(e) => {
+                                    const newCategoryMap = { ...categoryMap }
+                                    if (e.target.value) {
+                                      newCategoryMap[index] = e.target.value
+                                    } else {
+                                      delete newCategoryMap[index]
+                                    }
+                                    setCategoryMap(newCategoryMap)
+                                  }}
+                                  className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 appearance-none"
+                                >
+                                  <option value="">Uncategorized</option>
+                                  {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                  ))}
+                                </select>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                </div>
+                              </div>
+                              {transaction.suggested_category && !categoryMap[index] && (
+                                <div className="flex items-center gap-1.5 mt-1.5 px-2">
+                                  <span className="text-blue-500 text-xs">💡</span>
+                                  <span className="text-xs text-blue-600 font-medium">Suggestion: {transaction.suggested_category}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Merge Conflict Resolution */}
+                    {isExistingDuplicate && existingTransaction && (
+                      <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-100">
+                        <label className="flex gap-3 cursor-pointer">
+                          <Checkbox
+                            checked={mergeMap[index] || false}
+                            onChange={(e) => setMergeMap({ ...mergeMap, [index]: e.target.checked })}
+                            className="mt-1 w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
+                          />
+                          <div className="flex-1">
+                            <div className="text-sm font-semibold text-amber-900">Update existing transaction</div>
+                            <div className="text-xs text-amber-700 mt-0.5">
+                              Matches: {formatDate(existingTransaction.date)} • {formatCurrency(existingTransaction.amount)}
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))
-            })()}
+              )
+            })}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setStep('upload')
-                setFiles([])
-                setTextInput('')
-                setExtractedText('')
-                setParsedTransactions([])
-                setSelectedTransactions(new Set())
-                setCategoryMap({})
-                setAmountMap({})
-                setTypeMap({})
-                setMergeMap({})
-                setExistingTransactions([])
-                setStatusMessage('')
-                setStatusDetail('')
-                setProcessingProgress(null)
-                setLoading(false)
-              }}
-              className="flex-1 h-11 sm:h-10 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 touch-manipulation"
-            >
-              Back
-            </Button>
-            <Button
-              onClick={handleSaveTransactions}
-              disabled={loading || selectedTransactions.size === 0}
-              className="flex-1 sm:flex-[2] h-11 sm:h-10 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:shadow-none touch-manipulation text-sm sm:text-base text-white"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
-                  <span className="hidden sm:inline">{statusMessage || 'Saving...'}</span>
-                  <span className="sm:hidden">Saving...</span>
-                </span>
-              ) : (
-                <>
-                  <span className="hidden sm:inline">Save {selectedTransactions.size} Transaction{selectedTransactions.size !== 1 ? 's' : ''}</span>
-                  <span className="sm:hidden">Save ({selectedTransactions.size})</span>
-                </>
-              )}
-            </Button>
-          </div>
-          {loading && statusDetail && (
-            <div className="mt-3 text-center animate-pulse">
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{statusDetail}</p>
+          {/* Fixed Footer */}
+          <div className="flex-shrink-0 pt-4 mt-auto border-t border-gray-100 bg-white">
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setStep('upload')
+                  setFiles([])
+                  setTextInput('')
+                  setExtractedText('')
+                  setParsedTransactions([])
+                  setSelectedTransactions(new Set())
+                  setCategoryMap({})
+                  setAmountMap({})
+                  setTypeMap({})
+                  setMergeMap({})
+                  setExistingTransactions([])
+                  setStatusMessage('')
+                  setStatusDetail('')
+                  setProcessingProgress(null)
+                  setLoading(false)
+                }}
+                className="flex-1 h-12 rounded-xl border border-gray-200 bg-white text-base font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveTransactions}
+                disabled={loading || selectedTransactions.size === 0}
+                className="flex-[2] h-12 rounded-xl bg-blue-600 text-base font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20 transition-all"
+              >
+                {loading ? 'Saving...' : `Import ${selectedTransactions.size} Items`}
+              </button>
             </div>
-          )}
+          </div>
         </div>
       </Modal>
     </div>
