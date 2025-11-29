@@ -837,7 +837,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
           setLoading(false)
         }}
         title="Review Transactions"
-        className="max-w-2xl w-full mx-0 max-h-[calc(100dvh-3rem)] sm:max-h-[90vh]"
+        className="max-w-2xl w-full mx-0 max-h-[calc(100dvh-8rem)] sm:max-h-[90vh]"
       >
         <div className="flex flex-col min-h-0 bg-white">
           {/* Stats Header */}

@@ -42,7 +42,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
       
       {/* Modal */}
       <Card className={cn(
-        'relative z-10 w-full max-w-md max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100vh-2rem)] md:max-h-[85vh] overflow-hidden flex flex-col',
+        'relative z-10 w-full max-w-md max-h-[calc(100dvh-8rem)] sm:max-h-[calc(100vh-2rem)] md:max-h-[85vh] overflow-hidden flex flex-col',
         'mx-auto my-auto shadow-2xl',
         className
       )}>
