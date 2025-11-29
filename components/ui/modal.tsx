@@ -60,7 +60,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="flex-1 overflow-hidden flex flex-col px-4 sm:px-6">
+        <CardContent className="flex-1 overflow-y-auto px-4 sm:px-6">
           {children}
         </CardContent>
       </Card>
