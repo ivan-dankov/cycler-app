@@ -24,15 +24,25 @@ interface TransactionsListProps {
 
 export default function TransactionsList({ initialTransactions, categories }: TransactionsListProps) {
   const [transactions, setTransactions] = useState(initialTransactions)
+  const [localCategories, setLocalCategories] = useState(categories)
   
   useEffect(() => {
     setTransactions(initialTransactions)
   }, [initialTransactions])
 
+  useEffect(() => {
+    setLocalCategories(categories)
+  }, [categories])
+
   const [showForm, setShowForm] = useState(false)
   const [editingTransaction, setEditingTransaction] = useState<TransactionWithCategory | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  const handleCategoriesChange = async (updatedCategories: Category[]) => {
+    setLocalCategories(updatedCategories)
+    router.refresh()
+  }
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this transaction?')) return
@@ -107,12 +117,13 @@ export default function TransactionsList({ initialTransactions, categories }: Tr
       >
         <TransactionForm
           transaction={editingTransaction}
-          categories={categories}
+          categories={localCategories}
           onSuccess={handleFormSuccess}
           onCancel={() => {
             setShowForm(false)
             setEditingTransaction(null)
           }}
+          onCategoriesChange={handleCategoriesChange}
         />
       </Modal>
 

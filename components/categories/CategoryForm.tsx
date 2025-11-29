@@ -16,7 +16,7 @@ interface Category {
 
 interface CategoryFormProps {
   category?: Category | null
-  onSuccess: () => void
+  onSuccess: (category?: Category) => void
   onCancel: () => void
 }
 
@@ -74,25 +74,31 @@ export default function CategoryForm({ category, onSuccess, onCancel }: Category
     }
 
     if (category) {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('categories')
         .update(categoryData)
         .eq('id', category.id)
+        .select()
+        .single()
 
       if (error) {
         setError(error.message)
         setLoading(false)
       } else {
-        onSuccess()
+        onSuccess(data)
       }
     } else {
-      const { error } = await supabase.from('categories').insert(categoryData)
+      const { data, error } = await supabase
+        .from('categories')
+        .insert(categoryData)
+        .select()
+        .single()
 
       if (error) {
         setError(error.message)
         setLoading(false)
       } else {
-        onSuccess()
+        onSuccess(data)
       }
     }
   }

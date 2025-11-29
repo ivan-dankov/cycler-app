@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ImportTransactions from '@/components/import/ImportTransactions'
 import ManualTransactionForm from '@/components/add/ManualTransactionForm'
 import { Card, CardContent } from '@/components/ui'
 import { Plus, Camera01 } from '@untitledui/icons'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 interface AddPageProps {
   categories: Array<{ id: string; name: string; color?: string; icon?: string }>
@@ -12,6 +14,21 @@ interface AddPageProps {
 
 export default function AddPageContent({ categories }: AddPageProps) {
   const [activeTab, setActiveTab] = useState<'manual' | 'screenshot'>('manual')
+  const [localCategories, setLocalCategories] = useState(categories)
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    setLocalCategories(categories)
+  }, [categories])
+
+  const handleCategoriesChange = async (updatedCategories: Array<{ id: string; name: string; color?: string; icon?: string }>) => {
+    setLocalCategories(updatedCategories)
+    // We update local state immediately. 
+    // We do NOT call router.refresh() here to avoid race conditions where 
+    // stale server data might overwrite our optimistic update.
+    // The page will be refreshed when the transaction is saved.
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -42,9 +59,15 @@ export default function AddPageContent({ categories }: AddPageProps) {
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         {activeTab === 'screenshot' ? (
-          <ImportTransactions categories={categories} />
+          <ImportTransactions 
+            categories={localCategories.map(c => ({ id: c.id, name: c.name }))} 
+            onCategoriesChange={(cats) => handleCategoriesChange(cats.map(c => ({ ...c, color: undefined, icon: undefined })))}
+          />
         ) : (
-          <ManualTransactionForm categories={categories} />
+          <ManualTransactionForm 
+            categories={localCategories} 
+            onCategoriesChange={handleCategoriesChange}
+          />
         )}
       </div>
     </div>

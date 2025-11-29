@@ -7,17 +7,10 @@ import CategoryForm from './CategoryForm'
 import { formatCurrency } from '@/lib/utils/format'
 import { Button, Card, CardContent, Modal } from '@/components/ui'
 import { Edit02, Trash01, Plus } from '@untitledui/icons'
-
-interface Category {
-  id: string
-  name: string
-  budget_amount: number
-  color?: string | null
-  icon?: string | null
-}
+import { CategoryWithBalance } from '@/types/transactions'
 
 interface CategoriesManagerProps {
-  initialCategories: Category[]
+  initialCategories: CategoryWithBalance[]
   userId: string
 }
 
@@ -33,7 +26,7 @@ export default function CategoriesManager({
   }, [initialCategories])
 
   const [showCategoryForm, setShowCategoryForm] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [editingCategory, setEditingCategory] = useState<CategoryWithBalance | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -109,48 +102,96 @@ export default function CategoriesManager({
             {categories.length === 0 ? (
               <p className="text-gray-600 text-sm">No categories yet</p>
             ) : (
-              categories.map((category) => (
-                <div
-                  key={category.id}
-                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-                  style={{ borderLeft: `4px solid ${category.color || 'transparent'}` }}
-                >
-                  <div className="flex items-center gap-3">
-                    {category.icon && (
-                      <span className="text-xl">{category.icon}</span>
-                    )}
-                    <div>
-                      <p className="font-medium text-gray-900">{category.name}</p>
-                      <p className="text-sm text-gray-600">
-                        Budget: {formatCurrency(Number(category.budget_amount))}
-                      </p>
+              categories.map((category) => {
+                const percentageUsed = category.budget_amount > 0 
+                  ? (category.spent / category.budget_amount) * 100 
+                  : 0
+                const isOverBudget = category.remaining < 0
+
+                return (
+                  <div
+                    key={category.id}
+                    className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                    style={{ borderLeft: `4px solid ${category.color || 'transparent'}` }}
+                  >
+                    <div className="flex items-center gap-3 flex-1">
+                      {category.icon && (
+                        <span className="text-xl">{category.icon}</span>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900">{category.name}</p>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 mt-1">
+                          <p className="text-sm text-gray-600">
+                            Budget: {formatCurrency(Number(category.budget_amount))}
+                          </p>
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className={`font-medium ${
+                              isOverBudget 
+                                ? 'text-red-600' 
+                                : 'text-gray-500'
+                            }`}>
+                              {isOverBudget ? 'Over Budget' : `${Math.min(Math.round(percentageUsed), 100)}% Used`}
+                            </span>
+                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-500">
+                              {formatCurrency(category.spent)} spent
+                            </span>
+                            <span className="text-gray-400">•</span>
+                            <span className={`font-medium ${
+                              isOverBudget 
+                                ? 'text-red-600' 
+                                : 'text-gray-700'
+                            }`}>
+                              {formatCurrency(category.remaining)} left
+                            </span>
+                          </div>
+                        </div>
+                        {category.budget_amount > 0 && (
+                          <div className="w-full bg-gray-200 rounded-full h-2 mt-2 overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 ${
+                                isOverBudget
+                                  ? 'bg-red-500'
+                                  : percentageUsed > 85
+                                  ? 'bg-yellow-500'
+                                  : percentageUsed > 50
+                                  ? 'bg-blue-500'
+                                  : 'bg-green-500'
+                              }`}
+                              style={{ 
+                                width: `${Math.min(percentageUsed, 100)}%`,
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-1 sm:gap-2 sm:flex-shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingCategory(category)
+                          setShowCategoryForm(true)
+                        }}
+                        aria-label="Edit"
+                        className="h-9 w-9 sm:h-8 sm:w-8 p-0 touch-manipulation"
+                      >
+                        <Edit02 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteCategory(category.id)}
+                        aria-label="Delete"
+                        className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 touch-manipulation"
+                      >
+                        <Trash01 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-1 sm:gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setEditingCategory(category)
-                        setShowCategoryForm(true)
-                      }}
-                      aria-label="Edit"
-                      className="h-9 w-9 sm:h-8 sm:w-8 p-0 touch-manipulation"
-                    >
-                      <Edit02 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteCategory(category.id)}
-                      aria-label="Delete"
-                      className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 touch-manipulation"
-                    >
-                      <Trash01 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))
+                )
+              })
             )}
           </div>
         </CardContent>

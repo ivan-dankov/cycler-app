@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ParsedTransaction } from '@/types/transactions'
 import { formatCurrency, formatDate } from '@/lib/utils/format'
 import { createClient } from '@/lib/supabase/client'
@@ -8,9 +8,11 @@ import { useRouter } from 'next/navigation'
 import { Button, Input, Label, Select, Textarea, Alert, AlertDescription, Card, CardContent, CardHeader, CardTitle, Modal, Checkbox } from '@/components/ui'
 import { AlertTriangle } from '@untitledui/icons'
 import { extractTextFromImageClient } from '@/lib/ocr/tesseract-client'
+import CategoryForm from '@/components/categories/CategoryForm'
 
 interface ImportTransactionsProps {
   categories: Array<{ id: string; name: string }>
+  onCategoriesChange?: (categories: Array<{ id: string; name: string }>) => void
 }
 
 interface TransactionWithMetadata extends ParsedTransaction {
@@ -30,7 +32,7 @@ interface ExistingTransaction {
   category_id: string | null
 }
 
-export default function ImportTransactions({ categories }: ImportTransactionsProps) {
+export default function ImportTransactions({ categories, onCategoriesChange }: ImportTransactionsProps) {
   const [step, setStep] = useState<'upload' | 'review'>('upload')
   const [files, setFiles] = useState<File[]>([])
   const [textInput, setTextInput] = useState('')
@@ -47,8 +49,14 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
   const [statusDetail, setStatusDetail] = useState<string>('')
   const [processingProgress, setProcessingProgress] = useState<{ current: number; total: number } | null>(null)
   const [existingTransactions, setExistingTransactions] = useState<ExistingTransaction[]>([])
+  const [localCategories, setLocalCategories] = useState(categories)
+  const [showCategoryForm, setShowCategoryForm] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    setLocalCategories(categories)
+  }, [categories])
 
   // Helper function to find category by name (case-insensitive, fuzzy match)
   const findCategoryByName = (name: string | undefined): string | undefined => {
@@ -56,11 +64,11 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
     const normalizedName = name.trim().toLowerCase()
     
     // Exact match first
-    const exactMatch = categories.find(cat => cat.name.toLowerCase() === normalizedName)
+    const exactMatch = localCategories.find(cat => cat.name.toLowerCase() === normalizedName)
     if (exactMatch) return exactMatch.id
     
     // Partial match (contains)
-    const partialMatch = categories.find(cat => 
+    const partialMatch = localCategories.find(cat => 
       cat.name.toLowerCase().includes(normalizedName) || 
       normalizedName.includes(cat.name.toLowerCase())
     )
@@ -992,8 +1000,16 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
                               <label className="text-xs font-medium text-gray-500 ml-1">Category</label>
                               <div className="relative">
                                 <select
-                                  value={categoryMap[index] || ''}
+                                  value={categoryMap[index] === '__create_new__' ? '' : (categoryMap[index] || '')}
                                   onChange={(e) => {
+                                    if (e.target.value === '__create_new__') {
+                                      setShowCategoryForm(true)
+                                      // Reset the select value
+                                      const newCategoryMap = { ...categoryMap }
+                                      delete newCategoryMap[index]
+                                      setCategoryMap(newCategoryMap)
+                                      return
+                                    }
                                     const newCategoryMap = { ...categoryMap }
                                     if (e.target.value) {
                                       newCategoryMap[index] = e.target.value
@@ -1005,9 +1021,10 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
                                   className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 appearance-none"
                                 >
                                   <option value="">Uncategorized</option>
-                                  {categories.map(cat => (
+                                  {localCategories.map(cat => (
                                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                                   ))}
+                                  <option value="__create_new__" className="text-blue-600 font-medium">+ Create New Category...</option>
                                 </select>
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -1084,6 +1101,45 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
             </div>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        isOpen={showCategoryForm}
+        onClose={() => setShowCategoryForm(false)}
+        title="New Category"
+      >
+        <CategoryForm
+          category={null}
+          onSuccess={async (newCategory) => {
+            if (newCategory) {
+              // Optimistically update local state immediately
+              const updatedCategories = [...localCategories, newCategory].sort((a, b) => 
+                a.name.localeCompare(b.name)
+              )
+              
+              setLocalCategories(updatedCategories)
+              
+              if (onCategoriesChange) {
+                onCategoriesChange(updatedCategories)
+              }
+
+              // Auto-select the newly created category if we're in review mode
+              if (step === 'review') {
+                // Find the first transaction without a category and assign the new one
+                const firstUncategorizedIndex = parsedTransactions.findIndex((_, idx) => 
+                  selectedTransactions.has(idx) && 
+                  typeMap[idx] === 'expense' && 
+                  !categoryMap[idx]
+                )
+                if (firstUncategorizedIndex !== -1) {
+                  setCategoryMap({ ...categoryMap, [firstUncategorizedIndex]: newCategory.id })
+                }
+              }
+            }
+            setShowCategoryForm(false)
+          }}
+          onCancel={() => setShowCategoryForm(false)}
+        />
       </Modal>
     </div>
   )
