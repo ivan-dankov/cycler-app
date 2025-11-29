@@ -1050,7 +1050,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
           </div>
 
           {/* Fixed Footer */}
-          <div className="flex-shrink-0 pt-4 mt-auto border-t border-gray-100 bg-white">
+          <div className="flex-shrink-0 pt-4 mt-auto border-t border-gray-100 bg-white modal-footer">
             <div className="flex gap-3">
               <button
                 onClick={() => {

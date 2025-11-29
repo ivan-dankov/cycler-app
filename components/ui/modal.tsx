@@ -30,7 +30,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 modal-container"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose()
@@ -42,7 +42,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
       
       {/* Modal */}
       <Card className={cn(
-        'relative z-10 w-full max-w-md max-h-[calc(100vh-0.5rem)] sm:max-h-[calc(100vh-2rem)] md:max-h-[85vh] overflow-hidden flex flex-col',
+        'relative z-10 w-full max-w-md max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100vh-2rem)] md:max-h-[85vh] overflow-hidden flex flex-col',
         'mx-auto my-auto shadow-2xl',
         className
       )}>
@@ -60,7 +60,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto px-4 sm:px-6 min-h-0 flex flex-col">
+        <CardContent className="flex-1 overflow-y-auto px-4 sm:px-6 min-h-0 flex flex-col pb-safe">
           {children}
         </CardContent>
       </Card>

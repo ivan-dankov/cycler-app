@@ -76,3 +76,32 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
 }
+
+/* Mobile safe area support for modals */
+@supports (padding: max(0px)) {
+  .modal-container {
+    padding-bottom: max(1rem, calc(env(safe-area-inset-bottom) + 1rem)) !important;
+  }
+  
+  .modal-footer {
+    padding-bottom: max(1rem, calc(env(safe-area-inset-bottom) + 1rem)) !important;
+  }
+  
+  .pb-safe {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .modal-container {
+    padding-bottom: 1rem !important;
+  }
+  
+  .modal-footer {
+    padding-bottom: 1rem !important;
+  }
+  
+  .pb-safe {
+    padding-bottom: 0.5rem !important;
+  }
+}
