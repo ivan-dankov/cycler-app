@@ -17,7 +17,7 @@ export default function TransactionsLoading() {
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div
               key={i}
-              className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
+              className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100"
             >
               <div className="flex items-center gap-4 flex-1">
                 <Skeleton className="h-12 w-12 rounded-lg" />

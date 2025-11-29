@@ -103,13 +103,13 @@ export default function TransactionForm({
 
       <div className="space-y-2">
         <Label>Type</Label>
-        <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg">
           <button
             type="button"
             className={`py-3 sm:py-2 px-4 rounded-md text-sm font-medium transition-all touch-manipulation ${
               type === 'income'
-                ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-white shadow-sm text-gray-900'
+                : 'text-gray-500 hover:text-gray-900'
             }`}
             onClick={() => setType('income')}
           >
@@ -119,8 +119,8 @@ export default function TransactionForm({
             type="button"
             className={`py-3 sm:py-2 px-4 rounded-md text-sm font-medium transition-all touch-manipulation ${
               type === 'expense'
-                ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-white shadow-sm text-gray-900'
+                : 'text-gray-500 hover:text-gray-900'
             }`}
             onClick={() => setType('expense')}
           >
@@ -177,8 +177,8 @@ export default function TransactionForm({
               onClick={() => setCategoryId('')}
               className={`flex flex-col items-center justify-center p-2.5 sm:p-2 rounded-lg border transition-all touch-manipulation min-h-[80px] sm:min-h-[70px] ${
                 categoryId === ''
-                  ? 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500'
-                  : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800'
+                  ? 'bg-gray-100 border-gray-300'
+                  : 'border-transparent hover:bg-gray-50'
               }`}
             >
               <span className="text-xl sm:text-xl mb-1">🚫</span>
@@ -191,8 +191,8 @@ export default function TransactionForm({
                 onClick={() => setCategoryId(cat.id)}
                 className={`flex flex-col items-center justify-center p-2.5 sm:p-2 rounded-lg border transition-all touch-manipulation min-h-[80px] sm:min-h-[70px] ${
                   categoryId === cat.id
-                    ? 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 ring-1 ring-gray-300 dark:ring-gray-500'
-                    : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800'
+                    ? 'bg-gray-100 border-gray-300 ring-1 ring-gray-300'
+                    : 'border-transparent hover:bg-gray-50'
                 }`}
               >
                 <div 

@@ -9,7 +9,6 @@ export function Label({ className, ...props }: LabelProps) {
     <label
       className={cn(
         'text-sm font-medium leading-none text-gray-900',
-        'dark:text-gray-100',
         className
       )}
       {...props}

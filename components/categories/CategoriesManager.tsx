@@ -67,11 +67,11 @@ export default function CategoriesManager({
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-lg font-semibold text-gray-900">
                 Categories
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Total Monthly Budget: <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(totalBudget)}</span>
+              <p className="text-sm text-gray-500 mt-1">
+                Total Monthly Budget: <span className="font-medium text-gray-900">{formatCurrency(totalBudget)}</span>
               </p>
             </div>
             <Button
@@ -107,12 +107,12 @@ export default function CategoriesManager({
 
           <div className="space-y-2">
             {categories.length === 0 ? (
-              <p className="text-gray-600 dark:text-gray-400 text-sm">No categories yet</p>
+              <p className="text-gray-600 text-sm">No categories yet</p>
             ) : (
               categories.map((category) => (
                 <div
                   key={category.id}
-                  className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
                   style={{ borderLeft: `4px solid ${category.color || 'transparent'}` }}
                 >
                   <div className="flex items-center gap-3">
@@ -120,8 +120,8 @@ export default function CategoriesManager({
                       <span className="text-xl">{category.icon}</span>
                     )}
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">{category.name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="font-medium text-gray-900">{category.name}</p>
+                      <p className="text-sm text-gray-600">
                         Budget: {formatCurrency(Number(category.budget_amount))}
                       </p>
                     </div>
@@ -144,7 +144,7 @@ export default function CategoriesManager({
                       size="sm"
                       onClick={() => handleDeleteCategory(category.id)}
                       aria-label="Delete"
-                      className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 dark:text-red-400 touch-manipulation"
+                      className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 touch-manipulation"
                     >
                       <Trash01 className="w-4 h-4" />
                     </Button>

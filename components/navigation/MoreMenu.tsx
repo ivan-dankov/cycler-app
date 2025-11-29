@@ -23,7 +23,7 @@ export default function MoreMenu() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex flex-col items-center justify-center h-full transition-colors text-gray-500 dark:text-gray-400"
+        className="flex flex-col items-center justify-center h-full transition-colors text-gray-500"
       >
         <svg
           className="w-6 h-6 mb-1"
@@ -47,21 +47,21 @@ export default function MoreMenu() {
           <Link
             href="/cycles"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-              <PieChart01 className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <PieChart01 className="w-5 h-5 text-gray-700" />
             </div>
-            <span className="font-medium text-gray-900 dark:text-white">Cycles</span>
+            <span className="font-medium text-gray-900">Cycles</span>
           </Link>
           
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+            className="w-full flex items-center gap-3 p-4 rounded-lg hover:bg-gray-50 transition-colors text-left"
           >
-            <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <div className="p-2 bg-gray-100 rounded-lg">
               <svg
-                className="w-5 h-5 text-gray-700 dark:text-gray-300"
+                className="w-5 h-5 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -75,7 +75,7 @@ export default function MoreMenu() {
                 />
               </svg>
             </div>
-            <span className="font-medium text-gray-900 dark:text-white">Logout</span>
+            <span className="font-medium text-gray-900">Logout</span>
           </button>
         </div>
       </Modal>

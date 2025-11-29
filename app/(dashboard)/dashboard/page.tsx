@@ -245,8 +245,8 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cyc
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Dashboard</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+            <p className="text-gray-500 mt-1">
               Overview of your financial activity
             </p>
           </div>
@@ -258,57 +258,57 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cyc
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Income Card */}
-          <Card className="border-none shadow-sm bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950/30 dark:to-gray-900 overflow-hidden relative group">
+          <Card className="border-none shadow-sm bg-gradient-to-br from-emerald-50 to-white overflow-hidden relative group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <TrendUp01 className="w-24 h-24 text-emerald-600" />
             </div>
             <CardContent className="p-6 relative z-10">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg">
-                  <TrendUp01 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <div className="p-2 bg-emerald-100 rounded-lg">
+                  <TrendUp01 className="w-5 h-5 text-emerald-600" />
                 </div>
-                <span className="text-sm font-semibold text-emerald-900 dark:text-emerald-100">Income</span>
+                <span className="text-sm font-semibold text-emerald-900">Income</span>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+              <p className="text-3xl font-bold text-gray-900 tracking-tight">
                 {formatCurrency(totals.income)}
               </p>
             </CardContent>
           </Card>
 
           {/* Expenses Card */}
-          <Card className="border-none shadow-sm bg-gradient-to-br from-rose-50 to-white dark:from-rose-950/30 dark:to-gray-900 overflow-hidden relative group">
+          <Card className="border-none shadow-sm bg-gradient-to-br from-rose-50 to-white overflow-hidden relative group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <TrendDown01 className="w-24 h-24 text-rose-600" />
             </div>
             <CardContent className="p-6 relative z-10">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg">
-                  <TrendDown01 className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                <div className="p-2 bg-rose-100 rounded-lg">
+                  <TrendDown01 className="w-5 h-5 text-rose-600" />
                 </div>
-                <span className="text-sm font-semibold text-rose-900 dark:text-rose-100">Expenses</span>
+                <span className="text-sm font-semibold text-rose-900">Expenses</span>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+              <p className="text-3xl font-bold text-gray-900 tracking-tight">
                 {formatCurrency(totals.expenses)}
               </p>
             </CardContent>
           </Card>
 
           {/* Net Card */}
-          <Card className="border-none shadow-sm bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/30 dark:to-gray-900 overflow-hidden relative group">
+          <Card className="border-none shadow-sm bg-gradient-to-br from-blue-50 to-white overflow-hidden relative group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <Wallet01 className="w-24 h-24 text-blue-600" />
             </div>
             <CardContent className="p-6 relative z-10">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                  <Wallet01 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Wallet01 className="w-5 h-5 text-blue-600" />
                 </div>
-                <span className="text-sm font-semibold text-blue-900 dark:text-blue-100">Net Balance</span>
+                <span className="text-sm font-semibold text-blue-900">Net Balance</span>
               </div>
               <p className={`text-3xl font-bold tracking-tight ${
                 totals.net >= 0 
-                  ? 'text-gray-900 dark:text-white' 
-                  : 'text-rose-600 dark:text-rose-400'
+                  ? 'text-gray-900' 
+                  : 'text-rose-600'
               }`}>
                 {formatCurrency(totals.net)}
               </p>
@@ -320,27 +320,27 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cyc
           {/* Main Content - Categories */}
           <div className="xl:col-span-2 space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Budget Categories</h2>
+              <h2 className="text-xl font-bold text-gray-900">Budget Categories</h2>
               <Link 
                 href="/categories"
-                className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1 transition-colors"
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
               >
                 Manage <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             
             {categories.length === 0 ? (
-              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-8 text-center border border-dashed border-gray-300 dark:border-gray-700">
-                <div className="inline-flex p-3 bg-white dark:bg-gray-800 rounded-full mb-4 shadow-sm">
+              <div className="bg-gray-50 rounded-xl p-8 text-center border border-dashed border-gray-300">
+                <div className="inline-flex p-3 bg-white rounded-full mb-4 shadow-sm">
                   <CreditCard01 className="w-6 h-6 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No categories yet</h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
+                <p className="text-gray-500 mb-6 max-w-sm mx-auto">
                   Create categories to track your spending and set budgets for different expenses.
                 </p>
                 <Link
                   href="/categories"
-                  className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg hover:opacity-90 transition-opacity font-medium"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
                 >
                   Create Categories
                 </Link>
@@ -357,10 +357,10 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cyc
           {/* Sidebar - Recent Transactions */}
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Activity</h2>
+              <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
               <Link 
                 href="/transactions"
-                className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1 transition-colors"
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </Link>
@@ -368,28 +368,28 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cyc
 
             <div className="space-y-3">
               {recentTransactions.length === 0 ? (
-                <div className="text-center py-8 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">No recent transactions</p>
+                <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                  <p className="text-sm text-gray-500">No recent transactions</p>
                 </div>
               ) : (
                 recentTransactions.map((transaction) => (
                   <div 
                     key={transaction.id} 
-                    className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-sm transition-shadow"
+                    className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-shadow"
                   >
                     <div className="flex items-center gap-3">
                       <div className={`p-2.5 rounded-xl ${
                         transaction.type === 'income' 
-                          ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' 
-                          : 'bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-400'
+                          ? 'bg-emerald-50 text-emerald-600' 
+                          : 'bg-gray-50 text-gray-600'
                       }`}>
                         {transaction.type === 'income' ? <TrendUp01 className="w-5 h-5" /> : <CreditCard01 className="w-5 h-5" />}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate max-w-[140px]" title={transaction.description}>
+                        <p className="text-sm font-semibold text-gray-900 truncate max-w-[140px]" title={transaction.description}>
                           {transaction.description}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs text-gray-500 mt-0.5">
                           {formatDate(transaction.date)}
                         </p>
                       </div>
@@ -397,13 +397,13 @@ export default async function DashboardPage(props: { searchParams: Promise<{ cyc
                     <div className="text-right">
                       <p className={`text-sm font-bold ${
                         transaction.type === 'income'
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-gray-900 dark:text-white'
+                          ? 'text-emerald-600'
+                          : 'text-gray-900'
                       }`}>
                         {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
                       </p>
                       {transaction.category_name && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs text-gray-500 mt-0.5">
                           {transaction.category_name}
                         </p>
                       )}

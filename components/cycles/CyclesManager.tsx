@@ -52,7 +52,7 @@ export default function CyclesManager({
     <Card>
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Budget Cycles</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Budget Cycles</h2>
           <Button size="sm" onClick={() => setShowCycleForm(true)} className="w-full sm:w-auto touch-manipulation">
             <Plus className="w-4 h-4 mr-1" />
             New Cycle
@@ -69,7 +69,7 @@ export default function CyclesManager({
 
         <div className="space-y-2">
           {cycles.length === 0 ? (
-            <p className="text-gray-600 dark:text-gray-400 text-sm">No cycles yet</p>
+            <p className="text-gray-600 text-sm">No cycles yet</p>
           ) : (
             cycles.map((cycle) => {
               const isCurrent = currentCycle?.id === cycle.id
@@ -78,19 +78,19 @@ export default function CyclesManager({
                   key={cycle.id}
                   className={`p-3 rounded-lg border transition-colors ${
                     isCurrent
-                      ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800'
-                      : 'bg-gray-50 border-gray-200 dark:bg-gray-700 dark:border-gray-600'
+                      ? 'bg-blue-50 border-blue-200'
+                      : 'bg-gray-50 border-gray-200'
                   }`}
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900 dark:text-white">
+                        <p className="font-medium text-gray-900">
                           {format(new Date(cycle.start_date), 'MMMM d, yyyy')} -{' '}
                           {format(new Date(cycle.end_date), 'MMMM d, yyyy')}
                         </p>
                         {isCurrent && (
-                          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
                             Current
                           </span>
                         )}
@@ -102,7 +102,7 @@ export default function CyclesManager({
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteCycle(cycle.id)}
-                        className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 touch-manipulation"
+                        className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 touch-manipulation"
                         aria-label="Delete cycle"
                       >
                         <Trash01 className="w-4 h-4" />

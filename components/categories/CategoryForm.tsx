@@ -211,8 +211,8 @@ export default function CategoryForm({ category, onSuccess, onCancel }: Category
                   onClick={() => setIcon(presetEmoji)}
                   className={`h-12 sm:h-10 rounded-md flex items-center justify-center text-xl sm:text-xl border transition-all touch-manipulation ${
                     icon === presetEmoji 
-                      ? 'bg-gray-100 border-gray-300 dark:bg-gray-800 dark:border-gray-600' 
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-800 border-transparent'
+                      ? 'bg-gray-100 border-gray-300' 
+                      : 'hover:bg-gray-50 border-transparent'
                   }`}
                 >
                   {presetEmoji}

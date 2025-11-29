@@ -48,7 +48,7 @@ export default async function CyclesPage() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Cycles</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Cycles</h1>
         <CyclesManager
           cycles={cycles}
           currentCycle={currentCycle}

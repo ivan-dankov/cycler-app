@@ -16,7 +16,7 @@ export default function MobileNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 dark:bg-gray-900 dark:border-gray-800">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
       <div className="grid grid-cols-5 items-center h-16 px-2">
         {navItems.map((item) => {
           const isAdd = item.href === '/add'
@@ -31,13 +31,13 @@ export default function MobileNav() {
               >
                 <div className={`p-4 rounded-full shadow-lg transition-transform hover:scale-105 ${
                   isActive 
-                    ? 'bg-blue-600 text-white dark:bg-blue-600' 
-                    : 'bg-blue-600 text-white dark:bg-blue-500'
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-blue-600 text-white'
                 }`}>
                   <item.Icon className="w-6 h-6" />
                 </div>
                 <span className={`text-xs font-medium mt-1 ${
-                  isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
+                  isActive ? 'text-blue-600' : 'text-gray-500'
                 }`}>
                   {item.label}
                 </span>
@@ -51,8 +51,8 @@ export default function MobileNav() {
               href={item.href}
               className={`flex flex-col items-center justify-center h-full transition-colors ${
                 isActive
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 dark:text-gray-400'
+                  ? 'text-blue-600'
+                  : 'text-gray-500'
               }`}
             >
               <item.Icon className="w-6 h-6 mb-1" />

@@ -26,11 +26,11 @@ export default function CategoryCard({ category }: CategoryCardProps) {
               {category.icon || '📁'}
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white leading-tight">{category.name}</h3>
+              <h3 className="font-semibold text-gray-900 leading-tight">{category.name}</h3>
               <p className={`text-xs font-medium mt-0.5 ${
                 isOverBudget 
-                  ? 'text-red-600 dark:text-red-400' 
-                  : 'text-gray-500 dark:text-gray-400'
+                  ? 'text-red-600' 
+                  : 'text-gray-500'
               }`}>
                 {isOverBudget ? 'Over Budget' : `${Math.min(Math.round(percentageUsed), 100)}% Used`}
               </p>
@@ -39,17 +39,17 @@ export default function CategoryCard({ category }: CategoryCardProps) {
           <div className="text-right">
             <p className={`font-bold ${
               isOverBudget 
-                ? 'text-red-600 dark:text-red-400' 
-                : 'text-gray-900 dark:text-white'
+                ? 'text-red-600' 
+                : 'text-gray-900'
             }`}>
               {formatCurrency(category.remaining)}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">left</p>
+            <p className="text-xs text-gray-500">left</p>
           </div>
         </div>
 
         {category.budget_amount > 0 && (
-          <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 overflow-hidden">
+          <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
                 isOverBudget
@@ -67,7 +67,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
           </div>
         )}
         
-        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+        <div className="flex justify-between text-xs text-gray-500 mt-2">
           <span>{formatCurrency(category.spent)} spent</span>
           <span>of {formatCurrency(category.budget_amount)}</span>
         </div>

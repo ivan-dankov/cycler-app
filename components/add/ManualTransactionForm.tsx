@@ -91,20 +91,20 @@ export default function ManualTransactionForm({ categories, onSuccess }: ManualT
       )}
       
       {success && (
-        <Alert className="bg-green-50 text-green-900 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800">
+        <Alert className="bg-green-50 text-green-900 border-green-200">
           <AlertDescription>Transaction saved successfully!</AlertDescription>
         </Alert>
       )}
 
       <div className="space-y-2">
         <Label>Type</Label>
-        <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg">
           <button
             type="button"
             className={`py-3 sm:py-2 px-4 rounded-md text-sm font-medium transition-all touch-manipulation ${
               type === 'income'
-                ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-white shadow-sm text-gray-900'
+                : 'text-gray-500 hover:text-gray-900'
             }`}
             onClick={() => {
               setType('income')
@@ -117,8 +117,8 @@ export default function ManualTransactionForm({ categories, onSuccess }: ManualT
             type="button"
             className={`py-3 sm:py-2 px-4 rounded-md text-sm font-medium transition-all touch-manipulation ${
               type === 'expense'
-                ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-white shadow-sm text-gray-900'
+                : 'text-gray-500 hover:text-gray-900'
             }`}
             onClick={() => setType('expense')}
           >
@@ -177,8 +177,8 @@ export default function ManualTransactionForm({ categories, onSuccess }: ManualT
               onClick={() => setCategoryId('')}
               className={`flex flex-col items-center justify-center p-3 sm:p-2.5 rounded-lg border transition-all touch-manipulation min-h-[90px] sm:min-h-[80px] ${
                 categoryId === ''
-                  ? 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 shadow-inner'
-                  : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800 bg-gray-50/50 dark:bg-gray-800/50'
+                  ? 'bg-gray-100 border-gray-300 shadow-inner'
+                  : 'border-transparent hover:bg-gray-50 bg-gray-50/50'
               }`}
             >
               <span className="text-2xl sm:text-xl mb-1">🚫</span>
@@ -191,8 +191,8 @@ export default function ManualTransactionForm({ categories, onSuccess }: ManualT
                 onClick={() => setCategoryId(cat.id)}
                 className={`flex flex-col items-center justify-center p-3 sm:p-2.5 rounded-lg border transition-all touch-manipulation min-h-[90px] sm:min-h-[80px] ${
                   categoryId === cat.id
-                    ? 'bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-500 shadow-inner ring-1 ring-gray-200 dark:ring-gray-600'
-                    : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800 bg-gray-50/50 dark:bg-gray-800/50'
+                    ? 'bg-gray-100 border-gray-300 shadow-inner ring-1 ring-gray-200'
+                    : 'border-transparent hover:bg-gray-50 bg-gray-50/50'
                 }`}
               >
                 <div 

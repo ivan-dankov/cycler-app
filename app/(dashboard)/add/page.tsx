@@ -29,7 +29,7 @@ export default async function AddPage() {
   return (
     <div className="min-h-screen p-4 pb-24">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Add Transaction</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Add Transaction</h1>
         <AddPageContent categories={categories} />
       </div>
     </div>

@@ -719,7 +719,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-base font-semibold text-gray-900 dark:text-white">Upload Screenshot</Label>
+            <Label className="text-base font-semibold text-gray-900">Upload Screenshot</Label>
             <div className="relative group cursor-pointer">
               <Input
                 type="file"
@@ -729,17 +729,17 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
                 disabled={loading}
                 className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
               />
-              <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center transition-colors group-hover:border-blue-500 dark:group-hover:border-blue-400 bg-gray-50 dark:bg-gray-800/50">
-                <div className="mx-auto w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center transition-colors group-hover:border-blue-500 bg-gray-50">
+                <div className="mx-auto w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                <p className="text-sm font-medium text-gray-900 mb-1">
                   Take a photo or upload screenshot
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500">
                   Bank statements, receipts, or transaction lists
                 </p>
               </div>
@@ -749,11 +749,11 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Selected Files ({files.length})
                 </p>
-                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 border border-gray-100 dark:border-gray-800">
+                <div className="bg-gray-50 rounded-lg divide-y divide-gray-100 border border-gray-100">
                   {files.map((file, index) => (
                     <div key={index} className="flex items-center justify-between p-3 text-sm">
-                      <span className="truncate flex-1 font-medium text-gray-700 dark:text-gray-300">{file.name}</span>
-                      <span className="text-xs text-gray-500 bg-white dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700 ml-2">
+                      <span className="truncate flex-1 font-medium text-gray-700">{file.name}</span>
+                      <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200 ml-2">
                         {(file.size / (1024 * 1024)).toFixed(2)} MB
                       </span>
                     </div>
@@ -763,7 +763,7 @@ export default function ImportTransactions({ categories }: ImportTransactionsPro
                 <Button
                   onClick={startProcessing}
                   disabled={loading}
-                  className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700"
+                  className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   {loading ? 'Processing...' : 'Process Images'}
                 </Button>

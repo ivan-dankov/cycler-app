@@ -87,7 +87,7 @@ export default function TransactionsList({ initialTransactions, categories }: Tr
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Transactions</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Transactions</h1>
         <Button
           onClick={() => router.push('/add')}
           className="w-full sm:w-auto touch-manipulation"
@@ -120,11 +120,11 @@ export default function TransactionsList({ initialTransactions, categories }: Tr
         {transactions.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Plus className="w-6 h-6 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">No transactions yet</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">Get started by adding your first transaction.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">No transactions yet</h3>
+              <p className="text-gray-500 mb-4">Get started by adding your first transaction.</p>
               <Button
                 onClick={() => router.push('/add')}
               >
@@ -135,16 +135,16 @@ export default function TransactionsList({ initialTransactions, categories }: Tr
         ) : (
           sortedDates.map((date) => (
             <div key={date}>
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 ml-1">
+              <h3 className="text-sm font-medium text-gray-500 mb-3 ml-1">
                 {formatGroupDate(date)}
               </h3>
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {groupedTransactions[date].map((transaction, index) => (
                   <div 
                     key={transaction.id}
                     className={`
-                      group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors
-                      ${index !== groupedTransactions[date].length - 1 ? 'border-b border-gray-100 dark:border-gray-700/50' : ''}
+                      group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 hover:bg-gray-50 transition-colors
+                      ${index !== groupedTransactions[date].length - 1 ? 'border-b border-gray-100' : ''}
                     `}
                   >
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
@@ -160,12 +160,12 @@ export default function TransactionsList({ initialTransactions, categories }: Tr
                       
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-gray-900 dark:text-white truncate text-sm sm:text-base">
+                          <p className="font-medium text-gray-900 truncate text-sm sm:text-base">
                             {transaction.description}
                           </p>
                         </div>
                         {transaction.category_name && (
-                          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
+                          <p className="text-xs sm:text-sm text-gray-500 truncate">
                             {transaction.category_name}
                           </p>
                         )}
@@ -176,8 +176,8 @@ export default function TransactionsList({ initialTransactions, categories }: Tr
                       <span
                         className={`font-semibold whitespace-nowrap text-sm sm:text-base ${
                           transaction.type === 'income'
-                            ? 'text-green-600 dark:text-green-400'
-                            : 'text-gray-900 dark:text-white'
+                            ? 'text-green-600'
+                            : 'text-gray-900'
                         }`}
                       >
                         {transaction.type === 'income' ? '+' : ''}
@@ -197,7 +197,7 @@ export default function TransactionsList({ initialTransactions, categories }: Tr
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 dark:text-red-400 touch-manipulation"
+                          className="h-9 w-9 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700 touch-manipulation"
                           onClick={() => handleDelete(transaction.id)}
                           aria-label="Delete transaction"
                         >
